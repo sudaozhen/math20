@@ -25,7 +25,10 @@
     <style>
         :root { --primary: #4a90e2; --success: #4caf50; --danger: #f44336; --bg: #f0f2f5; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; overflow: hidden; }
+        body {
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
 
         /* 主页样式 */
         #home-page {
@@ -56,14 +59,17 @@
         .history-item.correct { border-left-color: var(--success); background: #e8f5e9; }
         .history-item.wrong { border-left-color: var(--danger); background: #ffebee; }
         .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
-        .stats-bar { display: flex; justify-content: space-around; padding: 10px; background: white; border-bottom: 1px solid #eee; }
+        .stats-bar { 
+            /* 自动获取顶部安全区高度，并额外加 5px 的呼吸空间 */
+            padding-top: calc(5px + env(safe-area-inset-top)) !important; 
+        }
         .stat-box { text-align: center; flex: 1; }
         .stat-val { font-size: 1.2rem; font-weight: bold; display: block; }
         .stat-lab { font-size: 0.7rem; color: #888; }
         .quiz-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
         #question { font-size: clamp(2.5rem, 8vh, 5rem); font-weight: 800; color: #333; }
         #answer-view { font-size: clamp(2rem, 7vh, 4.5rem); min-height: 1.2em; color: var(--primary); border-bottom: 5px solid var(--primary); min-width: 120px; text-align: center; margin-top: 10px; }
-        .keypad-container { background: #e2e8f0; padding: 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
+        .keypad-container { background: #e2e8f0; padding: 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important; }
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 500px; margin: 0 auto; }
         .btn { background: white; border: none; height: clamp(50px, 8vh, 80px); font-size: 1.5rem; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; }
         .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #cbd5e1; }
