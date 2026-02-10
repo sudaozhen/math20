@@ -3,6 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="学习中心">
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        .keypad-container {
+            padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
+        }
+    </style>
+    <script>
+    // 5. 注册 Service Worker (如果你想做离线功能)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+        });
+    }
+    </script>
     <title>学习中心</title>
     <style>
         :root { --primary: #4a90e2; --success: #4caf50; --danger: #f44336; --bg: #f0f2f5; }
