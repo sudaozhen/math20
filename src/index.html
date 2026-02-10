@@ -49,7 +49,11 @@
 
         /* 游戏容器 */
         #game-container { display: none; height: 100vh; width: 100vw; flex-direction: row; }
-        .back-btn { position: absolute; top: 15px; right: 20px; z-index: 100; padding: 8px 15px; background: rgba(0,0,0,0.1); border: none; border-radius: 20px; cursor: pointer; }
+        .back-btn { 
+            position: absolute; 
+            top: calc(15px + env(safe-area-inset-top)); 
+            right: 20px; z-index: 100; padding: 8px 15px; background: rgba(0,0,0,0.1); border: none; border-radius: 20px; cursor: pointer; 
+        }
 
         /* 继承之前的 Math20 样式 */
         .sidebar { width: 25%; min-width: 200px; max-width: 320px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
@@ -60,8 +64,10 @@
         .history-item.wrong { border-left-color: var(--danger); background: #ffebee; }
         .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
         .stats-bar { 
-            /* 自动获取顶部安全区高度，并额外加 5px 的呼吸空间 */
-            padding-top: calc(5px + env(safe-area-inset-top)) !important; 
+            display: flex; justify-content: space-around; 
+            padding: 10px; background: white; border-bottom: 1px solid #eee;
+            /* 自动获取顶部安全区高度，并额外加 10px 的呼吸空间 */
+            padding-top: calc(10px + env(safe-area-inset-top)) !important; 
         }
         .stat-box { text-align: center; flex: 1; }
         .stat-val { font-size: 1.2rem; font-weight: bold; display: block; }
