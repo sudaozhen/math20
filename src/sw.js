@@ -4,7 +4,7 @@ const ASSETS = [
     'index.html',
     'math20.html',
     'mainfest.json',
-    'img/math.png'
+    'img/icon.png'
     // 如果你有单独的 css 或 js，也写在这里
 ];
 
