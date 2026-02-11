@@ -70,7 +70,11 @@ function submit() {
 function renderKeypad() {
     const keypads = document.querySelectorAll('.keypad');
     keypads.forEach(pad => {
-        if (pad.innerHTML.trim() !== '') return; // Avoid re-rendering if already present
+        // Force clear to ensure re-render if needed, or check logic
+        // The previous logic was: if (pad.innerHTML.trim() !== '') return;
+        // But comments might be present (e.g. <!-- JS will render buttons here -->) which makes trim() not empty.
+        // Let's check if it has buttons instead.
+        if (pad.querySelector('button')) return; 
 
         let html = '';
         // 1-9
