@@ -51,7 +51,9 @@ function submit() {
     if(list) {
         const item = document.createElement('div');
         item.className = `history-item ${isCorrect ? 'correct' : 'wrong'}`;
-        item.innerHTML = `<span><b>#${stats.total}</b> ${currentQuiz.a}${currentQuiz.op}${currentQuiz.b}=${currentQuiz.ans}</span><span>${isCorrect?'✅':'❌'}</span>`;
+        // Show user's answer. If wrong, append correct answer in parentheses.
+        const displayResult = isCorrect ? userAns : `${userAns} (${currentQuiz.ans})`;
+        item.innerHTML = `<span><b>#${stats.total}</b> ${currentQuiz.a}${currentQuiz.op}${currentQuiz.b}=${displayResult}</span><span>${isCorrect?'✅':'❌'}</span>`;
         list.prepend(item);
     }
 
