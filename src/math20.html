@@ -9,6 +9,7 @@
 <body>
 
 <div id="game-container">
+    <div class="sidebar-overlay" onclick="toggleHistory()"></div>
     <div class="sidebar">
         <div class="sidebar-header">记录</div>
         <div class="history-list" id="historyList"></div>
@@ -16,6 +17,7 @@
 
     <div class="main-content">
         <div class="stats-bar">
+            <button class="history-trigger" onclick="toggleHistory()">🕒 记录</button>
             <div class="stat-box"><span class="stat-val" id="s-total">0</span><span class="stat-lab">总数</span></div>
             <div class="stat-box"><span class="stat-val" id="s-ok" style="color:var(--success)">0</span><span class="stat-lab">正确</span></div>
             <div class="stat-box"><span class="stat-val" id="s-no" style="color:var(--danger)">0</span><span class="stat-lab">错误</span></div>

@@ -92,9 +92,17 @@ function renderKeypad() {
     });
 }
 
-// Expose functions to global scope if needed (though they are already global in this context)
+function toggleHistory() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (sidebar) sidebar.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
+}
+
+// Expose functions to global scope
 window.makeQuiz = makeQuiz;
 window.press = press;
 window.del = del;
 window.submit = submit;
 window.renderKeypad = renderKeypad;
+window.toggleHistory = toggleHistory;
