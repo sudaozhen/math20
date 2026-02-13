@@ -93,23 +93,44 @@ body {
 .stat-val { font-size: 1.2rem; font-weight: bold; display: block; }
 .stat-lab { font-size: 0.7rem; color: #888; text-transform: uppercase; }
 
-.quiz-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
-#question { font-size: clamp(2.5rem, 8vh, 5rem); font-weight: 800; color: #333; }
-#answer-view { font-size: clamp(2rem, 7vh, 4.5rem); min-height: 1.2em; color: var(--primary); border-bottom: 5px solid var(--primary); min-width: 120px; text-align: center; margin-top: 10px; }
+.quiz-area { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 10px; 
+    gap: 15px;
+}
+#question { font-size: clamp(2rem, 10vh, 4rem); font-weight: 800; color: #333; }
+#answer-view { 
+    font-size: clamp(2rem, 10vh, 4rem); 
+    min-height: 1.2em; 
+    color: var(--primary); 
+    border-bottom: 5px solid var(--primary); 
+    min-width: 80px; 
+    text-align: center;
+}
 
 .keypad-container { 
     background: #e2e8f0; 
-    padding: 15px; 
-    padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important; 
+    padding: 10px; 
+    padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important; 
 }
-.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 500px; margin: 0 auto; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 500px; margin: 0 auto; }
 .btn { 
     background: white; border: none; 
-    height: clamp(50px, 8vh, 80px); 
+    height: clamp(44px, 12vh, 70px); 
     font-size: 1.5rem; font-weight: bold; 
     border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; 
+    transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
 }
-.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #cbd5e1; background: #f1f5f9; }
+.btn:active { 
+    transform: translateY(3px); 
+    box-shadow: 0 1px 0 #cbd5e1; 
+    background: #f1f5f9; 
+    filter: brightness(0.9);
+}
 .btn-del { background: #fbbf24; color: white; box-shadow: 0 4px 0 #d97706; }
 .btn-ok { background: var(--primary); color: white; box-shadow: 0 4px 0 #2563eb; }
 
@@ -145,5 +166,27 @@ body {
     }
     .history-trigger {
         display: block;
+    }
+}
+
+/* 横屏适配 (Landscape) */
+@media (orientation: landscape) and (max-height: 500px) {
+    .quiz-area {
+        flex-direction: row;
+        gap: 20px;
+        padding: 5px;
+    }
+    .stats-bar {
+        padding: 5px 10px;
+    }
+    #question, #answer-view {
+        font-size: clamp(1.5rem, 15vh, 3rem);
+    }
+    .keypad-container {
+        padding: 5px;
+    }
+    .btn {
+        height: clamp(36px, 15vh, 50px);
+        font-size: 1.2rem;
     }
 }
