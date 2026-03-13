@@ -63,15 +63,17 @@
     </div>
 </div>
 
+<script src="keypad.js"></script>
 <script src="math20.js"></script>
 <script>
     // --- 路由逻辑 ---
     function launchApp(appName) {
         document.getElementById('home-page').style.display = 'none';
         document.getElementById('game-container').style.display = 'flex';
-        if(appName === 'math20') {
-            if (typeof makeQuiz === 'function') {
-                renderKeypad(); // Ensure keypad is rendered
+        if (appName === 'math20') {
+            // 确保 math20.js 提供了 handleKeypadInput 函数来处理键盘输入
+            if (typeof makeQuiz === 'function' && typeof handleKeypadInput === 'function') {
+                renderKeypad('.keypad-container', handleKeypadInput); // 渲染通用键盘组件
                 makeQuiz();
             }
         }

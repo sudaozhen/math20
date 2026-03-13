@@ -36,11 +36,13 @@
     </div>
 </div>
 
+<script src="keypad.js"></script>
 <script src="math20.js"></script>
 <script>
     // Auto start quiz
-    renderKeypad();
-    makeQuiz();
+    // 确保 handleKeypadInput 在 math20.js 中已定义
+    renderKeypad('.keypad-container', handleKeypadInput);
+    makeQuiz(); // 开始出题
 </script>
 </body>
 </html>
