@@ -33,8 +33,8 @@ function makeQuiz() {
     const aEl = document.getElementById('answer-view');
 
     if (isTtsEnabled && window.tts) {
-        const opText = currentQuiz.op === '+' ? '加' : '减去';
-        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于多少？`;
+        const opText = currentQuiz.op === '+' ? '加' : '减';
+        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
         tts.speak(questionText, 'zh-CN');
     }
 
@@ -111,8 +111,8 @@ function toggleHistory() {
 
 function repeatQuestion() {
     if (window.tts) {
-        const opText = currentQuiz.op === '+' ? '加' : '减去';
-        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于多少？`;
+        const opText = currentQuiz.op === '+' ? '加' : '减';
+        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
         tts.speak(questionText, 'zh-CN');
     }
 }
