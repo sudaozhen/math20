@@ -17,6 +17,16 @@
         });
     }
     </script>
+    <style>
+        /* 语音播报开关样式 */
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-right: 8px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success, #2196F3); }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .stats-bar .stat-box { align-items: center; }
+    </style>
     <title>学习中心</title>
 </head>
 <body>
@@ -36,8 +46,6 @@
 </div>
 
 <div id="game-container" style="display: none;">
-    <button class="back-btn" onclick="goHome()">🏠 退出</button>
-    
     <div class="sidebar-overlay" onclick="toggleHistory()"></div>
     <div class="sidebar">
         <div class="sidebar-header">答题记录</div>
@@ -45,6 +53,20 @@
     </div>
 
     <div class="main-content">
+        <!-- 新增顶部工具栏：包含退出、语音、重读 -->
+        <div class="app-toolbar">
+            <button class="back-btn" onclick="goHome()">🏠 退出</button>
+            <div style="display: flex; align-items: center;">
+                <span style="font-size: 0.8rem; margin-right: 4px;">语音报题</span>
+                <label class="switch" title="切换语音报题" style="margin: 0 4px; transform: scale(0.8);">
+                    <input type="checkbox" id="tts-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span style="font-size: 0.8rem; margin-left: 8px; margin-right: 4px;">重复题目</span>
+                <button onclick="repeatQuestion()" style="background: none; border: none; font-size: 1.2rem; padding: 0; cursor: pointer;" title="重读题目">🔁</button>
+            </div>
+        </div>
+
         <div class="stats-bar">
             <button class="history-trigger" onclick="toggleHistory()">🕒 记录</button>
             <div class="stat-box"><span class="stat-val" id="s-total">0</span><span class="stat-lab">总数</span></div>
@@ -63,6 +85,7 @@
     </div>
 </div>
 
+<script src="tts.js"></script>
 <script src="keypad.js"></script>
 <script src="math20.js"></script>
 <script>

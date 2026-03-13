@@ -1,23 +1,44 @@
 let currentQuiz = { a:0, b:0, op:'', ans:0, input:'' };
 let stats = { total: 0, ok: 0, no: 0 };
+let isTtsEnabled = false;
+
+/**
+ * 处理来自通用键盘组件的输入
+ * @param {string} key - 被按下的键值 ('1', '删除', '确认', etc.)
+ */
+function handleKeypadInput(key) {
+    if (!isNaN(parseInt(key, 10))) { // 是数字
+        press(key);
+    } else if (key === '删除') {
+        del();
+    } else if (key === '确认') {
+        submit();
+    }
+}
 
 function makeQuiz() {
     const isPlus = Math.random() > 0.5;
     if (isPlus) {
-        currentQuiz.a = Math.floor(Math.random() * 20) + 1;
+        currentQuiz.a = Math.floor(Math.random() * 19) + 1; // 1-19
         currentQuiz.b = Math.floor(Math.random() * (21 - currentQuiz.a));
         currentQuiz.op = '+';
         currentQuiz.ans = currentQuiz.a + currentQuiz.b;
     } else {
-        currentQuiz.a = Math.floor(Math.random() * 20) + 1;
+        currentQuiz.a = Math.floor(Math.random() * 19) + 2; // 2-20
         currentQuiz.b = Math.floor(Math.random() * currentQuiz.a) + 1;
         currentQuiz.op = '-';
         currentQuiz.ans = currentQuiz.a - currentQuiz.b;
     }
     currentQuiz.input = '';
-    const qEl = document.getElementById('question');
     const aEl = document.getElementById('answer-view');
-    if(qEl) qEl.innerText = `${currentQuiz.a} ${currentQuiz.op} ${currentQuiz.b} =`;
+
+    if (isTtsEnabled && window.tts) {
+        const opText = currentQuiz.op === '+' ? '加' : '减去';
+        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于多少？`;
+        tts.speak(questionText, 'zh-CN');
+    }
+
+    displayQuestion();
     if(aEl) aEl.innerText = '';
 }
 
@@ -26,6 +47,18 @@ function press(n) {
         currentQuiz.input += n;
         const el = document.getElementById('answer-view');
         if(el) el.innerText = currentQuiz.input;
+    }
+}
+
+function displayQuestion() {
+    const qEl = document.getElementById('question');
+    if (!qEl) return;
+
+    qEl.style.visibility = isTtsEnabled ? 'hidden' : 'visible';
+    if (isTtsEnabled) {
+        qEl.innerText = '请听题...';
+    } else {
+        qEl.innerText = `${currentQuiz.a} ${currentQuiz.op} ${currentQuiz.b} =`;
     }
 }
 
@@ -69,29 +102,6 @@ function submit() {
     }
 }
 
-function renderKeypad() {
-    const keypads = document.querySelectorAll('.keypad');
-    keypads.forEach(pad => {
-        // Force clear to ensure re-render if needed, or check logic
-        // The previous logic was: if (pad.innerHTML.trim() !== '') return;
-        // But comments might be present (e.g. <!-- JS will render buttons here -->) which makes trim() not empty.
-        // Let's check if it has buttons instead.
-        if (pad.querySelector('button')) return; 
-
-        let html = '';
-        // 1-9
-        for(let i=1; i<=9; i++) {
-            html += `<button class="btn" onclick="press(${i})">${i}</button>`;
-        }
-        // Del, 0, Ok
-        html += `<button class="btn btn-del" onclick="del()">删除</button>`;
-        html += `<button class="btn" onclick="press(0)">0</button>`;
-        html += `<button class="btn btn-ok" onclick="submit()">确认</button>`;
-        
-        pad.innerHTML = html;
-    });
-}
-
 function toggleHistory() {
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
@@ -99,10 +109,43 @@ function toggleHistory() {
     if (overlay) overlay.classList.toggle('active');
 }
 
+function repeatQuestion() {
+    if (window.tts) {
+        const opText = currentQuiz.op === '+' ? '加' : '减去';
+        const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于多少？`;
+        tts.speak(questionText, 'zh-CN');
+    }
+}
+
+function setupTtsToggle() {
+    const ttsToggle = document.getElementById('tts-toggle');
+    if (!ttsToggle) return;
+
+    try {
+        isTtsEnabled = localStorage.getItem('math20_ttsEnabled') === 'true';
+        ttsToggle.checked = isTtsEnabled;
+        displayQuestion();
+    } catch (e) {
+        console.error("无法访问 localStorage:", e);
+    }
+
+    ttsToggle.addEventListener('change', () => {
+        isTtsEnabled = ttsToggle.checked;
+        try {
+            localStorage.setItem('math20_ttsEnabled', isTtsEnabled);
+        } catch (e) {
+            console.error("无法访问 localStorage:", e);
+        }
+        
+        displayQuestion();
+        if (window.tts) tts.cancel();
+    });
+}
+
+setupTtsToggle();
+
 // Expose functions to global scope
 window.makeQuiz = makeQuiz;
-window.press = press;
-window.del = del;
-window.submit = submit;
-window.renderKeypad = renderKeypad;
+window.handleKeypadInput = handleKeypadInput;
 window.toggleHistory = toggleHistory;
+window.repeatQuestion = repeatQuestion;
