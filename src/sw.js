@@ -1,12 +1,14 @@
 const CACHE_NAME = 'math-v1';
 const ASSETS = [
     '/',
-    'index.html',
-    'math20.html',
-    'mainfest.json',
     'img/icon.png',
-    'math.js',
-    'style.css'
+    'index.html',
+    'keypad.js',
+    'mainfest.json',
+    'math20.html',
+    'math20.js',
+    'style.css',
+    'tts.js'
     // 如果你有单独的 css 或 js，也写在这里
 ];
 
