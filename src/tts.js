@@ -8,7 +8,13 @@ const tts = {
      * @type {boolean}
      */
     isSupported: 'speechSynthesis' in window,
-
+    
+    /**
+     * 存储可用的语音列表.
+     * @type {SpeechSynthesisVoice[]}
+     */
+    voices: [],
+    
     /**
      * 初始化模块，预加载语音列表.
      */
@@ -17,14 +23,18 @@ const tts = {
             console.warn("此浏览器不支持 Web Speech API (TTS).");
             return;
         }
-        // 尝试触发语音列表加载
-        window.speechSynthesis.getVoices();
-        // 语音列表加载是异步的，监听 onvoiceschanged 事件
+
+        const loadVoices = () => {
+            // 获取所有支持的语音, 特别是中文语音
+            this.voices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('zh'));
+            // console.log("可用的中文语音:", this.voices); // 调试时可以取消注释
+        };
+
+        // 语音列表是异步加载的，需要监听事件
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                // 语音列表已更新
-            };
+            window.speechSynthesis.onvoiceschanged = loadVoices;
         }
+        loadVoices(); // 立即尝试加载一次
     },
 
     /**
@@ -45,6 +55,19 @@ const tts = {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
         utterance.rate = 1.0; // 正常语速
+
+        // 优先选择更高质量的语音 (特别是为 Apple 设备优化)
+        // 您可以根据需要在这个列表中添加或修改语音名称
+        const preferredVoices = [
+            'Ting-Ting', // iOS/macOS 昔日经典高质量中文女声
+            'Sin-ji',    // iOS/macOS 粤语女声
+            'Li-mu'      // 另一个 macOS 中文男声
+        ];
+
+        const selectedVoice = this.voices.find(v => preferredVoices.includes(v.name));
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }
 
         utterance.onend = () => { if (onEndCallback) onEndCallback(); };
         utterance.onerror = (event) => {
