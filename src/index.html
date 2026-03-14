@@ -38,6 +38,10 @@
             <span class="app-icon">🔢</span>
             <span class="app-name">20以内加减法</span>
         </div>
+         <div class="app-card math" onclick="launchApp('math50')">
+            <span class="app-icon">🔢</span>
+            <span class="app-name">50以内加减法</span>
+        </div>
         <div class="app-card" style="opacity: 0.6; cursor: not-allowed;">
             <span class="app-icon">⏰</span>
             <span class="app-name">敬请期待</span>
@@ -48,25 +52,61 @@
 <div id="game-container" style="display: none;">
     <!-- 游戏通用布局将由 uitemplate.js 动态渲染 -->
 </div>
-
+ 
 <script src="uitemplate.js"></script>
 <script src="tts.js"></script>
 <script src="keypad.js"></script>
-<script src="math20.js"></script>
 <script>
     // --- 路由逻辑 ---
+    let currentAppModule = null;
+
     function launchApp(appName) {
         document.getElementById('home-page').style.display = 'none';
         document.getElementById('game-container').style.display = 'flex';
+
+        // 渲染通用游戏界面, 并显示退出按钮
+        renderGameLayout(document.getElementById('game-container'), { showExitButton: true });
+        
+        let modulePath = '';
         if (appName === 'math20') {
-            // 渲染通用游戏界面, 并显示退出按钮
-            renderGameLayout(document.getElementById('game-container'), { showExitButton: true });
-            // 确保 math20.js 提供了 handleKeypadInput 函数来处理键盘输入
-            if (typeof makeQuiz === 'function' && typeof handleKeypadInput === 'function') {
-                renderKeypad('.keypad-container', handleKeypadInput); // 渲染通用键盘组件
-                setupTtsToggle(); // 初始化TTS开关
-                makeQuiz();
-            }
+            modulePath = './math20.js';
+        } else if (appName === 'math50') {
+            modulePath = './math50.js';
+        }
+
+        if (modulePath) {
+            import(modulePath)
+            .then(module => {
+                currentAppModule = module;
+
+                // 1. 绑定键盘事件到当前模块的 handleKeypadInput
+                renderKeypad('.keypad-container', (key) => {
+                    if (currentAppModule && currentAppModule.handleKeypadInput) {
+                        currentAppModule.handleKeypadInput(key);
+                    }
+                });
+
+                // 2. 初始化 TTS 开关
+                if (module.setupTtsToggle) {
+                    module.setupTtsToggle();
+                }
+
+                // 3. 将全局按钮功能指向当前模块 (例如: 重复读题, 查看历史)
+                window.repeatQuestion = () => {
+                    if (currentAppModule && currentAppModule.repeatQuestion) currentAppModule.repeatQuestion();
+                };
+                window.toggleHistory = () => {
+                    if (currentAppModule && currentAppModule.toggleHistory) currentAppModule.toggleHistory();
+                };
+
+                // 4. 开始出题
+                if (module.makeQuiz) {
+                    module.makeQuiz();
+                }
+            })
+            .catch(error => {
+                console.error(`Failed to load ${modulePath}`, error);
+            });
         }
     }
 
@@ -77,5 +117,7 @@
         }
     }
 </script>
+
+
 </body>
 </html>

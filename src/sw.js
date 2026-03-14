@@ -7,6 +7,8 @@ const ASSETS = [
     'mainfest.json',
     'math20.html',
     'math20.js',
+    'math50.html',
+    'math50.js',
     'style.css',
     'sw.js',
     'tts.js',
