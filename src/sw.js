@@ -8,7 +8,9 @@ const ASSETS = [
     'math20.html',
     'math20.js',
     'style.css',
-    'tts.js'
+    'sw.js',
+    'tts.js',
+    'uitemplate.js'
     // 如果你有单独的 css 或 js，也写在这里
 ];
 

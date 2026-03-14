@@ -19,53 +19,22 @@
 <body>
 
 <div id="game-container">
-    <div class="sidebar-overlay" onclick="toggleHistory()"></div>
-    <div class="sidebar">
-        <div class="sidebar-header">记录</div>
-        <div class="history-list" id="historyList"></div>
-    </div>
-
-    <div class="main-content">
-        <div class="app-toolbar" style="justify-content: flex-end;">
-            <div style="display: flex; align-items: center;">
-                <span style="font-size: 0.8rem; margin-right: 4px;">语音报题</span>
-                <label class="switch" title="切换语音报题" style="margin: 0 4px; transform: scale(0.8);">
-                    <input type="checkbox" id="tts-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span style="font-size: 0.8rem; margin-left: 8px; margin-right: 4px;">重复题目</span>
-                <button onclick="repeatQuestion()" style="background: none; border: none; font-size: 1.2rem; padding: 0; cursor: pointer;" title="重读题目">🔁</button>
-            </div>
-        </div>
-
-        <div class="stats-bar">
-            <button class="history-trigger" onclick="toggleHistory()">🕒 记录</button>
-            <div class="stat-box"><span class="stat-val" id="s-total">0</span><span class="stat-lab">总数</span></div>
-            <div class="stat-box"><span class="stat-val" id="s-ok" style="color:var(--success)">0</span><span class="stat-lab">正确</span></div>
-            <div class="stat-box"><span class="stat-val" id="s-no" style="color:var(--danger)">0</span><span class="stat-lab">错误</span></div>
-        </div>
-
-        <div class="quiz-area">
-            <div id="question">准备...</div>
-            <div id="answer-view"></div>
-        </div>
-
-        <div class="keypad-container">
-            <div class="keypad">
-                <!-- JS will render buttons here -->
-            </div>
-        </div>
-    </div>
+    <!-- 游戏通用布局将由 uitemplate.js 动态渲染 -->
 </div>
 
+<script src="uitemplate.js"></script>
 <script src="tts.js"></script>
 <script src="keypad.js"></script>
 <script src="math20.js"></script>
 <script>
-    // Auto start quiz
-    // 确保 handleKeypadInput 在 math20.js 中已定义
+    // 1. 渲染通用游戏界面 (不显示退出按钮)
+    renderGameLayout(document.getElementById('game-container'), { showExitButton: false });
+    // 2. 初始化TTS开关 (它现在由math20.js暴露)
+    setupTtsToggle();
+    // 3. 渲染键盘
     renderKeypad('.keypad-container', handleKeypadInput);
-    makeQuiz(); // 开始出题
+    // 4. 开始出题
+    makeQuiz();
 </script>
 </body>
 </html>

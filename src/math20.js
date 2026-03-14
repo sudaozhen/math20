@@ -142,10 +142,9 @@ function setupTtsToggle() {
     });
 }
 
-setupTtsToggle();
-
 // Expose functions to global scope
 window.makeQuiz = makeQuiz;
 window.handleKeypadInput = handleKeypadInput;
 window.toggleHistory = toggleHistory;
 window.repeatQuestion = repeatQuestion;
+window.setupTtsToggle = setupTtsToggle;
