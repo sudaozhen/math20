@@ -3,6 +3,7 @@ let stats = { total: 0, ok: 0, no: 0 };
 let isTtsEnabled = false;
 let quizStartTime = null;
 let timerDelayId = null;
+let mistakeBank = [];
 
 /**
  * 处理来自通用键盘组件的输入
@@ -25,17 +26,31 @@ function makeQuiz() {
     }
     quizStartTime = null;
 
-    const isPlus = Math.random() > 0.5;
-    if (isPlus) {
-        currentQuiz.a = Math.floor(Math.random() * 19) + 1; // 1-19
-        currentQuiz.b = Math.floor(Math.random() * (21 - currentQuiz.a));
-        currentQuiz.op = '+';
-        currentQuiz.ans = currentQuiz.a + currentQuiz.b;
-    } else {
-        currentQuiz.a = Math.floor(Math.random() * 19) + 2; // 2-20
-        currentQuiz.b = Math.floor(Math.random() * currentQuiz.a) + 1;
-        currentQuiz.op = '-';
-        currentQuiz.ans = currentQuiz.a - currentQuiz.b;
+    let isFromBank = false;
+    // 40% 概率从错题集抽取，前提是错题集不为空
+    if (mistakeBank.length > 0 && Math.random() < 0.4) {
+        const idx = Math.floor(Math.random() * mistakeBank.length);
+        const q = mistakeBank[idx];
+        currentQuiz.a = q.a;
+        currentQuiz.b = q.b;
+        currentQuiz.op = q.op;
+        currentQuiz.ans = q.ans;
+        isFromBank = true;
+    }
+
+    if (!isFromBank) {
+        const isPlus = Math.random() > 0.5;
+        if (isPlus) {
+            currentQuiz.a = Math.floor(Math.random() * 19) + 1; // 1-19
+            currentQuiz.b = Math.floor(Math.random() * (21 - currentQuiz.a));
+            currentQuiz.op = '+';
+            currentQuiz.ans = currentQuiz.a + currentQuiz.b;
+        } else {
+            currentQuiz.a = Math.floor(Math.random() * 19) + 2; // 2-20
+            currentQuiz.b = Math.floor(Math.random() * currentQuiz.a) + 1;
+            currentQuiz.op = '-';
+            currentQuiz.ans = currentQuiz.a - currentQuiz.b;
+        }
     }
     currentQuiz.input = '';
     const aEl = document.getElementById('answer-view');
@@ -90,6 +105,13 @@ function submit() {
     let duration = 0;
     if (quizStartTime) {
         duration = (Date.now() - quizStartTime) / 1000;
+    }
+
+    // 错题集逻辑：答错 或 用时>3秒 -> 加入；答对 且 用时<=3秒 -> 移除
+    if (!isCorrect || duration > 3) {
+        addToMistakeBank(currentQuiz);
+    } else {
+        removeFromMistakeBank(currentQuiz);
     }
 
     let timeIcon = '🟢';
@@ -169,6 +191,36 @@ function setupTtsToggle() {
         if (window.tts) tts.cancel();
     });
 }
+
+// --- 错题集管理 ---
+function loadMistakes() {
+    try {
+        const data = localStorage.getItem('math20_mistakes');
+        if (data) mistakeBank = JSON.parse(data);
+    } catch (e) { console.error('Load mistakes failed', e); }
+}
+
+function saveMistakes() {
+    try {
+        localStorage.setItem('math20_mistakes', JSON.stringify(mistakeBank));
+    } catch (e) { console.error('Save mistakes failed', e); }
+}
+
+function addToMistakeBank(q) {
+    const exists = mistakeBank.some(item => item.a === q.a && item.b === q.b && item.op === q.op);
+    if (!exists) {
+        mistakeBank.push({ a: q.a, b: q.b, op: q.op, ans: q.ans });
+        saveMistakes();
+    }
+}
+
+function removeFromMistakeBank(q) {
+    const initialLen = mistakeBank.length;
+    mistakeBank = mistakeBank.filter(item => !(item.a === q.a && item.b === q.b && item.op === q.op));
+    if (mistakeBank.length < initialLen) saveMistakes();
+}
+
+loadMistakes();
 
 // Expose functions to global scope
 window.makeQuiz = makeQuiz;
