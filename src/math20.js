@@ -1,6 +1,8 @@
 let currentQuiz = { a:0, b:0, op:'', ans:0, input:'' };
 let stats = { total: 0, ok: 0, no: 0 };
 let isTtsEnabled = false;
+let quizStartTime = null;
+let timerDelayId = null;
 
 /**
  * 处理来自通用键盘组件的输入
@@ -17,6 +19,12 @@ function handleKeypadInput(key) {
 }
 
 function makeQuiz() {
+    if (timerDelayId) {
+        clearTimeout(timerDelayId);
+        timerDelayId = null;
+    }
+    quizStartTime = null;
+
     const isPlus = Math.random() > 0.5;
     if (isPlus) {
         currentQuiz.a = Math.floor(Math.random() * 19) + 1; // 1-19
@@ -35,7 +43,13 @@ function makeQuiz() {
     if (isTtsEnabled && window.tts) {
         const opText = currentQuiz.op === '+' ? '加' : '减';
         const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
-        tts.speak(questionText, 'zh-CN');
+        tts.speak(questionText, 'zh-CN', () => {
+            quizStartTime = Date.now();
+        });
+    } else {
+        timerDelayId = setTimeout(() => {
+            quizStartTime = Date.now();
+        }, 1000);
     }
 
     displayQuestion();
@@ -73,6 +87,20 @@ function submit() {
     const userAns = parseInt(currentQuiz.input);
     const isCorrect = userAns === currentQuiz.ans;
     
+    let duration = 0;
+    if (quizStartTime) {
+        duration = (Date.now() - quizStartTime) / 1000;
+    }
+
+    let timeIcon = '🟢';
+    if (duration > 5) {
+        timeIcon = '⛔';
+    } else if (duration > 3) {
+        timeIcon = '🔴';
+    } else if (duration >= 2) {
+        timeIcon = '🟡';
+    }
+
     stats.total++;
     isCorrect ? stats.ok++ : stats.no++;
     
@@ -86,7 +114,7 @@ function submit() {
         item.className = `history-item ${isCorrect ? 'correct' : 'wrong'}`;
         // Show user's answer. If wrong, append correct answer in parentheses.
         const displayResult = isCorrect ? userAns : `${userAns} (${currentQuiz.ans})`;
-        item.innerHTML = `<span><b>#${stats.total}</b> ${currentQuiz.a}${currentQuiz.op}${currentQuiz.b}=${displayResult}</span><span>${isCorrect?'✅':'❌'}</span>`;
+        item.innerHTML = `<span><b>#${stats.total}</b> ${currentQuiz.a}${currentQuiz.op}${currentQuiz.b}=${displayResult}</span><span>${timeIcon} ${isCorrect?'✅':'❌'}</span>`;
         list.prepend(item);
     }
 
