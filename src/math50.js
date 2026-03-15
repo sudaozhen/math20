@@ -108,18 +108,18 @@ function submit() {
     }
 
     // 错题集逻辑：答错 或 用时>3秒 -> 加入；答对 且 用时<=3秒 -> 移除
-    if (!isCorrect || duration > 3) {
+    if (!isCorrect || duration > 5) {
         addToMistakeBank(currentQuiz);
     } else {
         removeFromMistakeBank(currentQuiz);
     }
 
     let timeIcon = '🟢';
-    if (duration > 5) {
+    if (duration > 8) {
         timeIcon = '⛔';
-    } else if (duration > 3) {
+    } else if (duration > 5) {
         timeIcon = '🔴';
-    } else if (duration >= 2) {
+    } else if (duration >= 3) {
         timeIcon = '🟡';
     }
 
