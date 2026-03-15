@@ -13,7 +13,7 @@ function handleKeypadInput(key) {
     if (!isNaN(parseInt(key, 10))) { // 是数字
         press(key);
     } else if (key === '删除') {
-        del();
+       del();
     } else if (key === '确认') {
         submit();
     }
@@ -41,12 +41,12 @@ function makeQuiz() {
     if (!isFromBank) {
         const isPlus = Math.random() > 0.5;
         if (isPlus) {
-            currentQuiz.a = Math.floor(Math.random() * 19) + 1; // 1-19
-            currentQuiz.b = Math.floor(Math.random() * (21 - currentQuiz.a));
+            currentQuiz.a = Math.floor(Math.random() * 10) + 1; // 1-10
+            currentQuiz.b = Math.floor(Math.random() * (11 - currentQuiz.a));
             currentQuiz.op = '+';
             currentQuiz.ans = currentQuiz.a + currentQuiz.b;
         } else {
-            currentQuiz.a = Math.floor(Math.random() * 19) + 2; // 2-20
+            currentQuiz.a = Math.floor(Math.random() * 9) + 2; // 2-10
             currentQuiz.b = Math.floor(Math.random() * currentQuiz.a) + 1;
             currentQuiz.op = '-';
             currentQuiz.ans = currentQuiz.a - currentQuiz.b;
@@ -55,7 +55,7 @@ function makeQuiz() {
     currentQuiz.input = '';
     const aEl = document.getElementById('answer-view');
 
-    if (isTtsEnabled && window.tts) {
+    if (isTtsEnabled) {
         const opText = currentQuiz.op === '+' ? '加' : '减';
         const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
         tts.speak(questionText, 'zh-CN', () => {
@@ -98,7 +98,7 @@ function del() {
 }
 
 function submit() {
-    if (currentQuiz.input === '') return;
+   if (currentQuiz.input === '') return;
     const userAns = parseInt(currentQuiz.input);
     const isCorrect = userAns === currentQuiz.ans;
     
@@ -189,7 +189,7 @@ function setupTtsToggle() {
     if (!ttsToggle) return;
 
     try {
-        isTtsEnabled = localStorage.getItem('math20_ttsEnabled') === 'true';
+        isTtsEnabled = localStorage.getItem('math10_ttsEnabled') === 'true';
         ttsToggle.checked = isTtsEnabled;
         displayQuestion();
     } catch (e) {
@@ -199,27 +199,27 @@ function setupTtsToggle() {
     ttsToggle.addEventListener('change', () => {
         isTtsEnabled = ttsToggle.checked;
         try {
-            localStorage.setItem('math20_ttsEnabled', isTtsEnabled);
+            localStorage.setItem('math10_ttsEnabled', isTtsEnabled);
         } catch (e) {
             console.error("无法访问 localStorage:", e);
         }
         
         displayQuestion();
-        if (window.tts) tts.cancel();
+        if (window.tts) window.tts.cancel();
     });
 }
 
 // --- 错题集管理 ---
 function loadMistakes() {
     try {
-        const data = localStorage.getItem('math20_mistakes');
+        const data = localStorage.getItem('math10_mistakes');
         if (data) mistakeBank = JSON.parse(data);
     } catch (e) { console.error('Load mistakes failed', e); }
 }
 
 function saveMistakes() {
     try {
-        localStorage.setItem('math20_mistakes', JSON.stringify(mistakeBank));
+        localStorage.setItem('math10_mistakes', JSON.stringify(mistakeBank));
     } catch (e) { console.error('Save mistakes failed', e); }
 }
 
@@ -239,7 +239,7 @@ function removeFromMistakeBank(q) {
 
 loadMistakes();
 
-// Expose functions to global scope
+// 导出所有需要的函数
 export {
     makeQuiz,
     handleKeypadInput,

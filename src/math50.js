@@ -168,6 +168,23 @@ function repeatQuestion() {
 }
 
 function setupTtsToggle() {
+    // 重置状态，确保每次进入模块都是全新的开始
+    stats = { total: 0, ok: 0, no: 0 };
+    currentQuiz = { a: 0, b: 0, op: '', ans: 0, input: '' };
+
+    const historyList = document.getElementById('historyList');
+    if (historyList) {
+        historyList.innerHTML = '';
+    }
+    document.getElementById('s-total').innerText = '0';
+    document.getElementById('s-ok').innerText = '0';
+    document.getElementById('s-no').innerText = '0';
+
+    const answerView = document.getElementById('answer-view');
+    if (answerView) {
+        answerView.innerText = '';
+    }
+
     const ttsToggle = document.getElementById('tts-toggle');
     if (!ttsToggle) return;
 

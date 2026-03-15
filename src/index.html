@@ -1,123 +1,175 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="学习中心">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
-    
+
     <script>
-    // 5. 注册 Service Worker (如果你想做离线功能)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
-        });
-    }
+        // 5. 注册 Service Worker (如果你想做离线功能)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+            });
+        }
     </script>
     <style>
         /* 语音播报开关样式 */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-right: 8px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success, #2196F3); }
-        input:checked + .slider:before { transform: translateX(26px); }
-        .stats-bar .stat-box { align-items: center; }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--success, #2196F3);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .stats-bar .stat-box {
+            align-items: center;
+        }
     </style>
     <title>学习中心</title>
 </head>
+
 <body>
 
-<div id="home-page">
-    <h1 class="home-title">iPad 学习中心</h1>
-    <div class="app-grid">
-        <div class="app-card math" onclick="launchApp('math20')">
-            <span class="app-icon">🔢</span>
-            <span class="app-name">20以内加减法</span>
-        </div>
-         <div class="app-card math" onclick="launchApp('math50')">
-            <span class="app-icon">🔢</span>
-            <span class="app-name">50以内加减法</span>
-        </div>
-        <div class="app-card" style="opacity: 0.6; cursor: not-allowed;">
-            <span class="app-icon">⏰</span>
-            <span class="app-name">敬请期待</span>
+    <div id="home-page">
+        <h1 class="home-title">iPad 学习中心</h1>
+        <div class="app-grid">
+            <div class="app-card math" onclick="launchApp('math10')">
+                <span class="app-icon">🔢</span>
+                <span class="app-name">10以内加减法</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('math20')">
+                <span class="app-icon">🔢</span>
+                <span class="app-name">20以内加减法</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('math50')">
+                <span class="app-icon">🔢</span>
+                <span class="app-name">50以内加减法</span>
+            </div>
+            <div class="app-card" style="opacity: 0.6; cursor: not-allowed;">
+                <span class="app-icon">⏰</span>
+                <span class="app-name">敬请期待</span>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="game-container" style="display: none;">
-    <!-- 游戏通用布局将由 uitemplate.js 动态渲染 -->
-</div>
- 
-<script src="uitemplate.js"></script>
-<script src="tts.js"></script>
-<script src="keypad.js"></script>
-<script>
-    // --- 路由逻辑 ---
-    let currentAppModule = null;
+    <div id="game-container" style="display: none;">
+        <!-- 游戏通用布局将由 uitemplate.js 动态渲染 -->
+    </div>
 
-    function launchApp(appName) {
-        document.getElementById('home-page').style.display = 'none';
-        document.getElementById('game-container').style.display = 'flex';
+    <script src="uitemplate.js"></script>
+    <script src="tts.js"></script>
+    <script src="keypad.js"></script>
+    <script>
+        // --- 路由逻辑 ---
+        let currentAppModule = null;
 
-        // 渲染通用游戏界面, 并显示退出按钮
-        renderGameLayout(document.getElementById('game-container'), { showExitButton: true });
-        
-        let modulePath = '';
-        if (appName === 'math20') {
-            modulePath = './math20.js';
-        } else if (appName === 'math50') {
-            modulePath = './math50.js';
+        function launchApp(appName) {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+
+            // 渲染通用游戏界面, 并显示退出按钮
+            renderGameLayout(document.getElementById('game-container'), { showExitButton: true });
+
+            let modulePath = '';
+            if (appName === 'math10') {
+                modulePath = './math10.js';
+            } else if (appName === 'math20') {
+                modulePath = './math20.js';
+            } else if (appName === 'math50') {
+                modulePath = './math50.js';
+            }
+
+            if (modulePath) {
+                import(modulePath)
+                    .then(module => {
+                        currentAppModule = module;
+
+                        // 1. 绑定键盘事件到当前模块的 handleKeypadInput
+                        renderKeypad('.keypad-container', (key) => {
+                            if (currentAppModule && currentAppModule.handleKeypadInput) {
+                                currentAppModule.handleKeypadInput(key);
+                            }
+                        });
+
+                        // 2. 初始化 TTS 开关
+                        if (module.setupTtsToggle) {
+                            module.setupTtsToggle();
+                        }
+
+                        // 3. 将全局按钮功能指向当前模块 (例如: 重复读题, 查看历史)
+                        window.repeatQuestion = () => {
+                            if (currentAppModule && currentAppModule.repeatQuestion) currentAppModule.repeatQuestion();
+                        };
+                        window.toggleHistory = () => {
+                            if (currentAppModule && currentAppModule.toggleHistory) currentAppModule.toggleHistory();
+                        };
+
+                        // 4. 开始出题
+                        if (module.makeQuiz) {
+                            module.makeQuiz();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Failed to load ${modulePath}`, error);
+                    });
+            }
         }
 
-        if (modulePath) {
-            import(modulePath)
-            .then(module => {
-                currentAppModule = module;
-
-                // 1. 绑定键盘事件到当前模块的 handleKeypadInput
-                renderKeypad('.keypad-container', (key) => {
-                    if (currentAppModule && currentAppModule.handleKeypadInput) {
-                        currentAppModule.handleKeypadInput(key);
-                    }
-                });
-
-                // 2. 初始化 TTS 开关
-                if (module.setupTtsToggle) {
-                    module.setupTtsToggle();
-                }
-
-                // 3. 将全局按钮功能指向当前模块 (例如: 重复读题, 查看历史)
-                window.repeatQuestion = () => {
-                    if (currentAppModule && currentAppModule.repeatQuestion) currentAppModule.repeatQuestion();
-                };
-                window.toggleHistory = () => {
-                    if (currentAppModule && currentAppModule.toggleHistory) currentAppModule.toggleHistory();
-                };
-
-                // 4. 开始出题
-                if (module.makeQuiz) {
-                    module.makeQuiz();
-                }
-            })
-            .catch(error => {
-                console.error(`Failed to load ${modulePath}`, error);
-            });
+        function goHome() {
+            if (confirm("确定要退出练习吗？")) {
+                document.getElementById('home-page').style.display = 'flex';
+                document.getElementById('game-container').style.display = 'none';
+            }
         }
-    }
-
-    function goHome() {
-        if(confirm("确定要退出练习吗？")) {
-            document.getElementById('home-page').style.display = 'flex';
-            document.getElementById('game-container').style.display = 'none';
-        }
-    }
-</script>
+    </script>
 
 
 </body>
+
 </html>

@@ -5,6 +5,8 @@ const ASSETS = [
     'index.html',
     'keypad.js',
     'mainfest.json',
+    'math10.html',
+    'math10.js',
     'math20.html',
     'math20.js',
     'math50.html',
