@@ -141,7 +141,7 @@
             }
 
             // 渲染通用游戏界面, 并显示退出按钮
-            renderGameLayout(document.getElementById('game-container'), { showExitButton: true, title: gameTitle });
+            renderGameLayout(document.getElementById('game-container'), { showExitButton: true, m_title: gameTitle });
 
             if (modulePath) {
                 import(modulePath)

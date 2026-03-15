@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>50以内加减法</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* 语音播报开关样式 */
@@ -27,7 +28,7 @@
 <script src="math50.js"></script>
 <script>
     // 1. 渲染通用游戏界面 (不显示退出按钮)
-    renderGameLayout(document.getElementById('game-container'), { showExitButton: false, title: '50以内加减法' });
+    renderGameLayout(document.getElementById('game-container'), { showExitButton: false, m_title: '50以内加减法' });
     // 2. 初始化TTS开关 (它现在由math20.js暴露)
     setupTtsToggle();
     // 3. 渲染键盘
