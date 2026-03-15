@@ -3,6 +3,7 @@
  * @param {HTMLElement} container - 将要填充布局的容器元素.
  * @param {object} [options={}] - 配置选项.
  * @param {boolean} [options.showExitButton=false] - 是否显示退出按钮.
+ * @param {string} [options.title=''] - 游戏标题.
  */
 function renderGameLayout(container, options = {}) {
     if (!container) {
@@ -10,7 +11,7 @@ function renderGameLayout(container, options = {}) {
         return;
     }
 
-    const { showExitButton = false } = options;
+    const { showExitButton = false, title = '' } = options;
 
     const exitButtonHTML = showExitButton
         ? `<button class="back-btn" onclick="goHome()">🏠 退出</button>`
@@ -27,7 +28,10 @@ function renderGameLayout(container, options = {}) {
 
         <div class="main-content">
             <div class="app-toolbar" style="justify-content: ${toolbarJustify};">
-                ${exitButtonHTML}
+                <div style="display: flex; align-items: center;">
+                    ${exitButtonHTML}
+                    <span style="font-weight: bold; font-size: 1.1rem; margin-left: 10px;">${title}</span>
+                </div>
                 <div style="display: flex; align-items: center;">
                     <span style="font-size: 0.8rem; margin-right: 4px;">语音报题</span>
                     <label class="switch" title="切换语音报题" style="margin: 0 4px; transform: scale(0.8);">

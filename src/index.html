@@ -96,6 +96,7 @@
                 <span class="app-name">敬请期待</span>
             </div>
         </div>
+        <div id="version-display" style="margin-top: auto; padding-top: 20px; color: #888; font-size: 0.9rem;"></div>
     </div>
 
     <div id="game-container" style="display: none;">
@@ -109,21 +110,38 @@
         // --- 路由逻辑 ---
         let currentAppModule = null;
 
+        window.addEventListener('load', () => {
+            fetch('version.json')
+                .then(response => response.json())
+                .then(data => {
+                    const versionDisplay = document.getElementById('version-display');
+                    if (versionDisplay) {
+                        versionDisplay.textContent = `版本号: ${data.version}`;
+                    }
+                })
+                .catch(err => console.error('Failed to load version:', err));
+        });
+
         function launchApp(appName) {
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
 
-            // 渲染通用游戏界面, 并显示退出按钮
-            renderGameLayout(document.getElementById('game-container'), { showExitButton: true });
-
             let modulePath = '';
+            let gameTitle = '';
+
             if (appName === 'math10') {
                 modulePath = './math10.js';
+                gameTitle = '10以内加减法';
             } else if (appName === 'math20') {
                 modulePath = './math20.js';
+                gameTitle = '20以内加减法';
             } else if (appName === 'math50') {
                 modulePath = './math50.js';
+                gameTitle = '50以内加减法';
             }
+
+            // 渲染通用游戏界面, 并显示退出按钮
+            renderGameLayout(document.getElementById('game-container'), { showExitButton: true, title: gameTitle });
 
             if (modulePath) {
                 import(modulePath)
