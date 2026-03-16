@@ -14,6 +14,7 @@ const ASSETS = [
     'style.css',
     'sw.js',
     'tts.js',
+    'update-checker.js',
     'uitemplate.js',
     'version.json'
     // 如果你有单独的 css 或 js，也写在这里
@@ -25,4 +26,10 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('fetch', (e) => {
     e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+});
+
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
