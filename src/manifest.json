@@ -1,6 +1,6 @@
 {
-  "name": "学习中心",
-  "short_name": "学习中心",
+  "name": "口算练习",
+  "short_name": "口算练习",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f0f2f5",
