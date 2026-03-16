@@ -147,7 +147,8 @@ body {
     height: clamp(44px, 12vh, 70px); 
     font-size: 1.5rem; font-weight: bold; 
     border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; 
-    transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
+    transition: transform 0.05s, box-shadow 0.05s, filter 0.05s;
+    cursor: pointer; /* Hint to iOS that this is a clickable element */
 }
 .key:active { 
     transform: translateY(3px) scale(0.98); 
