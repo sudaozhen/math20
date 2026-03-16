@@ -150,13 +150,15 @@ body {
     transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
 }
 .key:active { 
-    transform: translateY(3px); 
+    transform: translateY(3px) scale(0.98); 
     box-shadow: 0 1px 0 #cbd5e1; 
-    background: #f1f5f9; 
-    filter: brightness(0.9);
+    /* background-color is darkened by the filter */
+    filter: brightness(0.95);
 }
 .key-del { background: #fbbf24; color: white; box-shadow: 0 4px 0 #d97706; }
+.key-del:active { box-shadow: 0 1px 0 #d97706; }
 .key-ok { background: var(--primary); color: white; box-shadow: 0 4px 0 #2563eb; }
+.key-ok:active { box-shadow: 0 1px 0 #2563eb; }
 
 /* 窄屏适配 */
 @media (max-width: 600px) {
