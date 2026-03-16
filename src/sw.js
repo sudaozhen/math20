@@ -4,6 +4,7 @@ const ASSETS = [
     'img/icon.png',
     'index.html',
     'keypad.js',
+    'main.js',
     'mainfest.json',
     'math10.html',
     'math10.js',
