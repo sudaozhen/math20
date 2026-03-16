@@ -11,14 +11,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 
-    <script>
-        // 5. 注册 Service Worker (如果你想做离线功能)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
-            });
-        }
-    </script>
     <style>
         /* 语音播报开关样式 */
         .switch {

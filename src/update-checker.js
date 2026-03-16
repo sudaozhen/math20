@@ -40,6 +40,17 @@ export function registerUpdateChecker() {
 
     // 4. 额外检查：即便 sw.js 没变，如果 version.json 变了，也提示更新
     checkVersionMismatch();
+
+    // 5. 新增：每 10 分钟自动轮询一次
+    setInterval(checkVersionMismatch, 10 * 60 * 1000);
+
+    // 6. 新增：当应用从后台切回前台时（例如用户解锁手机），立即检查
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log('[PWA检查] 应用切回前台，正在检查更新...');
+            checkVersionMismatch();
+        }
+    });
 }
 
 function trackInstalling(worker) {
@@ -64,16 +75,20 @@ function checkVersionMismatch() {
             fetch(`version.json?t=${Date.now()}`)
                 .then(res => res.json())
                 .then(remoteData => {
+                    console.log(`[PWA检查] 本地版本: ${localData.version} | 远程版本: ${remoteData.version}`);
+                    
                     // 3. 对比版本号
                     if (localData.version !== remoteData.version) {
-                        console.log(`检测到新版本: ${remoteData.version} (当前: ${localData.version})`);
+                        console.log('>>> 发现版本不一致，准备弹出更新提示');
                         // 传入 null 表示这不是标准的 SW 更新，而是强制版本更新
                         showUpdateUI(null);
+                    } else {
+                        console.log('>>> 版本一致，无需更新');
                     }
                 })
                 .catch(err => console.log('检查远程版本失败:', err));
         })
-        .catch(err => console.log('获取本地版本失败:', err));
+        .catch(err => console.log('获取本地版本失败 (可能是首次加载):', err));
 }
 
 function showUpdateUI(worker) {
