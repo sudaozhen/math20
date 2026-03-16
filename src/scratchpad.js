@@ -30,10 +30,10 @@ const scratchpad = {
 
         // 绑定事件监听
         this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
-        this.canvas.addEventListener('touchstart', (e) => this.startDrawing(e));
+        this.canvas.addEventListener('touchstart', (e) => this.startDrawing(e), { passive: false });
 
         this.canvas.addEventListener('mousemove', (e) => this.draw(e));
-        this.canvas.addEventListener('touchmove', (e) => this.draw(e));
+        this.canvas.addEventListener('touchmove', (e) => this.draw(e), { passive: false });
 
         this.canvas.addEventListener('mouseup', () => this.stopDrawing());
         this.canvas.addEventListener('touchend', () => this.stopDrawing());
@@ -64,7 +64,13 @@ const scratchpad = {
             y = event.clientY;
         }
         const rect = this.canvas.getBoundingClientRect();
-        return [x - rect.left, y - rect.top];
+
+        // 核心修复：计算缩放比例
+        // 当 canvas 实际显示尺寸(rect)与内部分辨率(width/height)不一致时，需要进行坐标映射
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
+        return [(x - rect.left) * scaleX, (y - rect.top) * scaleY];
     },
 
     startDrawing(e) {
