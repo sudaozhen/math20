@@ -3,6 +3,9 @@
  * 当有新的 Service Worker 可用时，会显示一个提示框，让用户可以点击更新。
  */
 
+// 记录页面加载时的初始版本
+let currentVersion = null;
+
 /**
  * 注册 Service Worker 更新检查逻辑。
  */
@@ -38,8 +41,17 @@ export function registerUpdateChecker() {
         });
     }
 
-    // 4. 额外检查：即便 sw.js 没变，如果 version.json 变了，也提示更新
-    checkVersionMismatch();
+    // 初始化：获取当前运行的版本（快照）
+    fetch('version.json')
+        .then(res => res.json())
+        .then(data => {
+            currentVersion = data.version;
+            console.log(`[PWA检查] 当前运行版本: ${currentVersion}`);
+            
+            // 4. 获取到基准版本后，立即检查一次远程
+            checkVersionMismatch();
+        })
+        .catch(err => console.log('初始化版本获取失败:', err));
 
     // 5. 新增：每 10 分钟自动轮询一次
     setInterval(checkVersionMismatch, 10 * 60 * 1000);
@@ -67,28 +79,27 @@ function trackInstalling(worker) {
  * 适用于 sw.js 文件本身未修改，但通过 version.json 发布了新版本的场景
  */
 function checkVersionMismatch() {
-    // 1. 获取当前缓存中的版本 (本地版本)
-    fetch('version.json')
+    // 如果没有初始版本，或者设备明确处于离线状态，则跳过检查
+    if (!currentVersion || !navigator.onLine) {
+        if (currentVersion && !navigator.onLine) {
+            console.log('[PWA检查] 设备离线，跳过远程版本检查。');
+        }
+        return;
+    }
+
+    // 直接请求服务器最新版本 (加时间戳绕过缓存)
+    fetch(`version.json?t=${Date.now()}`)
         .then(res => res.json())
-        .then(localData => {
-            // 2. 获取服务器上的最新版本 (加时间戳绕过缓存)
-            fetch(`version.json?t=${Date.now()}`)
-                .then(res => res.json())
-                .then(remoteData => {
-                    console.log(`[PWA检查] 本地版本: ${localData.version} | 远程版本: ${remoteData.version}`);
-                    
-                    // 3. 对比版本号
-                    if (localData.version !== remoteData.version) {
-                        console.log('>>> 发现版本不一致，准备弹出更新提示');
-                        // 传入 null 表示这不是标准的 SW 更新，而是强制版本更新
-                        showUpdateUI(null);
-                    } else {
-                        console.log('>>> 版本一致，无需更新');
-                    }
-                })
-                .catch(err => console.log('检查远程版本失败:', err));
+        .then(remoteData => {
+            // console.log(`[PWA检查] 运行中: ${currentVersion} | 服务器: ${remoteData.version}`);
+            
+            // 对比：如果服务器版本 与 初始运行版本 不一致，说明有更新
+            if (currentVersion !== remoteData.version) {
+                console.log('>>> 发现新版本，准备弹出更新提示');
+                showUpdateUI(null);
+            }
         })
-        .catch(err => console.log('获取本地版本失败 (可能是首次加载):', err));
+        .catch(err => console.log('检查远程版本失败:', err));
 }
 
 function showUpdateUI(worker) {
@@ -121,9 +132,13 @@ function nukeAndReload() {
         });
     }
     
-    caches.keys().then(keys => {
-        Promise.all(keys.map(key => caches.delete(key))).then(() => {
-            window.location.reload();
+    // 在 HTTP 环境下，window.caches 可能不存在，需要安全处理
+    if ('caches' in window) {
+        caches.keys().then(keys => {
+            Promise.all(keys.map(key => caches.delete(key))).then(() => window.location.reload());
         });
-    });
+    } else {
+        // 不支持 Cache API 或 HTTP 环境，直接强制刷新
+        window.location.reload();
+    }
 }
