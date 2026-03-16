@@ -23,6 +23,9 @@ function handleKeypadInput(key) {
 }
 
 function makeQuiz() {
+    // 清空草稿板
+    if (window.scratchpad) scratchpad.clear();
+
     if (timerDelayId) {
         clearTimeout(timerDelayId);
         timerDelayId = null;

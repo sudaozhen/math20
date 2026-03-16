@@ -12,6 +12,7 @@ const ASSETS = [
     'math20.js',
     'math50.html',
     'math50.js',
+    'scratchpad.js',
     'style.css',
     'sw.js',
     'tts.js',

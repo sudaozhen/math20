@@ -24,18 +24,30 @@
 
 <script src="uitemplate.js"></script>
 <script src="tts.js"></script>
+<script src="scratchpad.js"></script>
 <script src="keypad.js"></script>
-<script src="math50.js"></script>
-<script type="module" src="main.js"></script>
-<script>
-    // 1. 渲染通用游戏界面 (不显示退出按钮)
+<script type="module">
+    import * as game from './math50.js';
+    import './main.js'; // For update checker
+
+    // 1. 渲染通用游戏界面
     renderGameLayout(document.getElementById('game-container'), { showExitButton: false, m_title: '50以内加减法' });
-    // 2. 初始化TTS开关 (它现在由math20.js暴露)
-    setupTtsToggle();
-    // 3. 渲染键盘
-    renderKeypad('.keypad-container', handleKeypadInput);
-    // 4. 开始出题
-    makeQuiz();
+    
+    // 2. 初始化草稿板
+    scratchpad.init('scratchpad-canvas');
+
+    // 3. 初始化TTS开关
+    game.setupTtsToggle();
+
+    // 4. 渲染键盘
+    renderKeypad('.keypad-container', game.handleKeypadInput);
+
+    // 5. 开始出题
+    game.makeQuiz();
+
+    // Make functions global for uitemplate.js onclick handlers
+    window.toggleHistory = game.toggleHistory;
+    window.repeatQuestion = game.repeatQuestion;
 </script>
 </body>
 </html>

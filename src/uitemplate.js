@@ -50,6 +50,7 @@ function renderGameLayout(container, options = {}) {
                 <div class="stat-box"><span class="stat-val" id="s-no" style="color:var(--danger)">0</span><span class="stat-lab">错误</span></div>
             </div>
             <div class="quiz-area">
+                <canvas id="scratchpad-canvas"></canvas>
                 <div id="question"></div>
                 <div id="answer-view"></div>
             </div>

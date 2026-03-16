@@ -102,6 +102,7 @@
 
     <script src="uitemplate.js"></script>
     <script src="tts.js"></script>
+    <script src="scratchpad.js"></script>
     <script src="keypad.js"></script>
     <script type="module" src="main.js"></script>
     <script>
@@ -140,6 +141,9 @@
 
             // 渲染通用游戏界面, 并显示退出按钮
             renderGameLayout(document.getElementById('game-container'), { showExitButton: true, m_title: gameTitle });
+
+            // 初始化草稿板
+            scratchpad.init('scratchpad-canvas');
 
             if (modulePath) {
                 import(modulePath)
