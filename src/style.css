@@ -149,8 +149,11 @@ body {
     border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; 
     transition: transform 0.05s, box-shadow 0.05s, filter 0.05s;
     cursor: pointer; /* Hint to iOS that this is a clickable element */
+    touch-action: manipulation; /* 移除 iOS 300ms 点击延迟 */
+    -webkit-tap-highlight-color: transparent; /* 确保不显示默认灰色背景 */
 }
 .key:active { 
+    transition: none; /* 按下时立即响应，不要动画，防止快速点击看不见效果 */
     transform: translateY(3px) scale(0.98); 
     box-shadow: 0 1px 0 #cbd5e1; 
     /* background-color is darkened by the filter */
@@ -216,4 +219,11 @@ body {
         height: clamp(36px, 15vh, 50px);
         font-size: 1.2rem;
     }
+}
+
+.key.long-press {
+    /* 长按时的样式 */
+    background: #d0d0d0; /* 更深的背景色 */
+    transform: scale(0.9); /* 进一步缩小 */
+    box-shadow: 0 0px 0 #cbd5e1; /* 移除阴影 */
 }
