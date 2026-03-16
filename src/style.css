@@ -1,13 +1,13 @@
 :root { --primary: #4a90e2; --success: #4caf50; --danger: #f44336; --bg: #f0f2f5; }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 
 body {
     font-family: system-ui, -apple-system, sans-serif;
     background: var(--bg);
     margin: 0;
     padding-left: env(safe-area-inset-left);
-    overscroll-behavior: contain;
+    overscroll-behavior-y: none;
     padding-right: env(safe-area-inset-right);
     overflow: hidden; /* Prevent scrolling on body, handle in containers */
     height: 100vh;
