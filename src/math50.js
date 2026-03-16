@@ -1,3 +1,6 @@
+// 解决 iOS PWA 中 :active 伪类不立即触发的问题
+document.body.addEventListener('touchstart', function() {}, {passive: true});
+
 let currentQuiz = { a:0, b:0, op:'', ans:0, input:'' };
 let stats = { total: 0, ok: 0, no: 0 };
 let isTtsEnabled = false;
