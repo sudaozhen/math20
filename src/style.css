@@ -220,10 +220,3 @@ body {
         font-size: 1.2rem;
     }
 }
-
-.key.long-press {
-    /* 长按时的样式 */
-    background: #d0d0d0; /* 更深的背景色 */
-    transform: scale(0.9); /* 进一步缩小 */
-    box-shadow: 0 0px 0 #cbd5e1; /* 移除阴影 */
-}
