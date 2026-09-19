@@ -88,9 +88,9 @@
                 <span class="app-icon">🔢</span>
                 <span class="app-name">50以内加减法</span>
             </div>
-            <div class="app-card" style="opacity: 0.6; cursor: not-allowed;">
-                <span class="app-icon">⏰</span>
-                <span class="app-name">敬请期待</span>
+            <div class="app-card math" onclick="launchApp('mathMul')">
+                <span class="app-icon">✖️</span>
+                <span class="app-name">乘法表</span>
             </div>
         </div>
         <div id="version-display" style="margin-top: auto; padding-top: 20px; color: #888; font-size: 0.9rem;"></div>
@@ -125,7 +125,7 @@
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
 
-            const gameTitles = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法' };
+            const gameTitles = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表' };
             const gameTitle = gameTitles[appName];
 
             // 渲染通用游戏界面, 并显示退出按钮

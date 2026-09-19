@@ -12,28 +12,32 @@ globalThis.localStorage = { getItem: () => null, setItem() {} };
 
 const { createGame } = await import('./src/mathgame.js');
 
-// [名称, cap(和上限), plusMax(加数a上限), minusMax(被减数a上限)] — 与原 math10/20/50.js 一致
-const cases = [['math10', 10, 10, 10], ['math20', 20, 19, 20], ['math50', 50, 50, 50]];
+// 每个游戏一个校验函数 (a, op, b) => boolean，范围与原实现/需求一致
+const cases = [
+    ['math10', (a, op, b) => op === '+' ? (a >= 1 && a <= 10 && b >= 0 && a + b <= 10)
+                                        : (a >= 2 && a <= 10 && b >= 1 && b <= a)],
+    ['math20', (a, op, b) => op === '+' ? (a >= 1 && a <= 19 && b >= 0 && a + b <= 20)
+                                        : (a >= 2 && a <= 20 && b >= 1 && b <= a)],
+    ['math50', (a, op, b) => op === '+' ? (a >= 1 && a <= 50 && b >= 0 && a + b <= 50)
+                                        : (a >= 2 && a <= 50 && b >= 1 && b <= a)],
+    ['mathMul', (a, op, b) => op === '×' && a >= 1 && a <= 9 && b >= 1 && b <= 9],
+];
 
-for (const [name, cap, plusMax, minusMax] of cases) {
+for (const [name, valid] of cases) {
     const g = createGame(name);
-    let plusSeen = 0, minusSeen = 0;
+    const ops = new Set();
     for (let i = 0; i < 20000; i++) {
         g.makeQuiz();
-        const m = lastQ.match(/^(\d+) ([+-]) (\d+) =$/);
+        const m = lastQ.match(/^(\d+) ([+\-×]) (\d+) =$/);
         if (!m) throw new Error(`${name}: 题目格式异常: ${lastQ}`);
         const a = +m[1], op = m[2], b = +m[3];
-        if (op === '+') {
-            plusSeen++;
-            if (!(a >= 1 && a <= plusMax)) throw new Error(`${name}: 加法 a=${a} 超出 1..${plusMax}`);
-            if (!(b >= 0 && a + b <= cap)) throw new Error(`${name}: ${a}+${b} 超出 0..${cap - a}`);
-        } else {
-            minusSeen++;
-            if (!(a >= 2 && a <= minusMax)) throw new Error(`${name}: 减法 a=${a} 超出 2..${minusMax}`);
-            if (!(b >= 1 && b <= a)) throw new Error(`${name}: ${a}-${b} 的 b 超出 1..${a}`);
-        }
+        ops.add(op);
+        if (!valid(a, op, b)) throw new Error(`${name}: 超范围题目 ${a}${op}${b}`);
     }
-    if (!plusSeen || !minusSeen) throw new Error(`${name}: 加/减法未都出现`);
-    console.log(`OK ${name}: +${plusSeen} / -${minusSeen}, 范围全部合法`);
+    const expectOps = name === 'mathMul' ? ['×'] : ['+', '-'];
+    for (const op of expectOps) {
+        if (!ops.has(op)) throw new Error(`${name}: 未出现运算符 ${op}`);
+    }
+    console.log(`OK ${name}: 20000 题全部合法, 运算符 [${[...ops].join('')}]`);
 }
 console.log('全部通过');

@@ -6,7 +6,16 @@ const CONFIGS = {
     math10: { cap: 10, plusMax: 10, minusMax: 10, tBank: 3, tYellow: 2, tRed: 3, tBlack: 5 },
     math20: { cap: 20, plusMax: 19, minusMax: 20, tBank: 3, tYellow: 2, tRed: 3, tBlack: 5 },
     math50: { cap: 50, plusMax: 50, minusMax: 50, tBank: 5, tYellow: 3, tRed: 5, tBlack: 8 },
+    // 乘法表：带自定义 gen() 的游戏不走下面的加减法默认公式
+    mathMul: { tBank: 3, tYellow: 2, tRed: 3, tBlack: 5,
+        gen: () => {
+            const a = Math.floor(Math.random() * 9) + 1; // 1-9
+            const b = Math.floor(Math.random() * 9) + 1; // 1-9
+            return { a, b, op: '×', ans: a * b };
+        } },
 };
+
+const OP_TEXT = { '+': '加', '-': '减', '×': '乘' };
 
 export function createGame(name) {
     const cfg = CONFIGS[name];
@@ -58,6 +67,9 @@ export function createGame(name) {
         }
 
         if (!isFromBank) {
+            if (cfg.gen) {
+                Object.assign(currentQuiz, cfg.gen());
+            } else {
             const isPlus = Math.random() > 0.5;
             if (isPlus) {
                 currentQuiz.a = Math.floor(Math.random() * (cfg.plusMax - 1)) + 1; // 1..plusMax
@@ -70,12 +82,13 @@ export function createGame(name) {
                 currentQuiz.op = '-';
                 currentQuiz.ans = currentQuiz.a - currentQuiz.b;
             }
+            }
         }
         currentQuiz.input = '';
         const aEl = document.getElementById('answer-view');
 
         if (isTtsEnabled && window.tts) {
-            const opText = currentQuiz.op === '+' ? '加' : '减';
+            const opText = OP_TEXT[currentQuiz.op];
             const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
             tts.speak(questionText, 'zh-CN', () => {
                 quizStartTime = Date.now();
@@ -180,7 +193,7 @@ export function createGame(name) {
 
     function repeatQuestion() {
         if (window.tts) {
-            const opText = currentQuiz.op === '+' ? '加' : '减';
+            const opText = OP_TEXT[currentQuiz.op];
             const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
             tts.speak(questionText, 'zh-CN');
         }
