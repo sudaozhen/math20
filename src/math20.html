@@ -1,54 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>20以内加减法</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* 语音播报开关样式 */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-right: 8px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success, #2196F3); }
-        input:checked + .slider:before { transform: translateX(26px); }
-        .stats-bar .stat-box { align-items: center; }
-    </style>
-</head>
-<body>
-
-<div id="game-container">
-    <!-- 游戏通用布局将由 uitemplate.js 动态渲染 -->
-</div>
-
-<script src="uitemplate.js"></script>
-<script src="tts.js"></script>
-<script src="scratchpad.js"></script>
-<script src="keypad.js"></script>
-<script type="module">
-    import { createGame } from './mathgame.js';
-    const game = createGame('math20');
-    import './main.js'; // For update checker
-
-    // 1. 渲染通用游戏界面
-    renderGameLayout(document.getElementById('game-container'), { showExitButton: false, m_title: '10以内加减法' });
-    
-    // 2. 初始化草稿板
-    scratchpad.init('scratchpad-canvas');
-
-    // 3. 初始化TTS开关
-    game.setupTtsToggle();
-
-    // 4. 渲染键盘
-    renderKeypad('.keypad-container', game.handleKeypadInput);
-
-    // 5. 开始出题
-    game.makeQuiz();
-
-    // Make functions global for uitemplate.js onclick handlers
-    window.toggleHistory = game.toggleHistory;
-    window.repeatQuestion = game.repeatQuestion;
-</script>
-</body>
-</html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta http-equiv="refresh" content="0;url=game.html?g=math20">
+<title>跳转中...</title></head>
+<body><a href="game.html?g=math20">点击进入</a></body></html>
