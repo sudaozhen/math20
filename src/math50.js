@@ -61,7 +61,7 @@ function makeQuiz() {
     currentQuiz.input = '';
     const aEl = document.getElementById('answer-view');
 
-    if (isTtsEnabled) {
+    if (isTtsEnabled && window.tts) {
         const opText = currentQuiz.op === '+' ? '加' : '减';
         const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
         tts.speak(questionText, 'zh-CN', () => {
