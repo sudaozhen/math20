@@ -125,19 +125,8 @@
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
 
-            let modulePath = '';
-            let gameTitle = '';
-
-            if (appName === 'math10') {
-                modulePath = './math10.js';
-                gameTitle = '10以内加减法';
-            } else if (appName === 'math20') {
-                modulePath = './math20.js';
-                gameTitle = '20以内加减法';
-            } else if (appName === 'math50') {
-                modulePath = './math50.js';
-                gameTitle = '50以内加减法';
-            }
+            const gameTitles = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法' };
+            const gameTitle = gameTitles[appName];
 
             // 渲染通用游戏界面, 并显示退出按钮
             renderGameLayout(document.getElementById('game-container'), { showExitButton: true, m_title: gameTitle });
@@ -145,40 +134,34 @@
             // 初始化草稿板
             scratchpad.init('scratchpad-canvas');
 
-            if (modulePath) {
-                import(modulePath)
-                    .then(module => {
-                        currentAppModule = module;
+            import('./mathgame.js')
+                .then(lib => {
+                    currentAppModule = lib.createGame(appName);
 
-                        // 1. 绑定键盘事件到当前模块的 handleKeypadInput
-                        renderKeypad('.keypad-container', (key) => {
-                            if (currentAppModule && currentAppModule.handleKeypadInput) {
-                                currentAppModule.handleKeypadInput(key);
-                            }
-                        });
-
-                        // 2. 初始化 TTS 开关
-                        if (module.setupTtsToggle) {
-                            module.setupTtsToggle();
+                    // 1. 绑定键盘事件到当前模块的 handleKeypadInput
+                    renderKeypad('.keypad-container', (key) => {
+                        if (currentAppModule && currentAppModule.handleKeypadInput) {
+                            currentAppModule.handleKeypadInput(key);
                         }
-
-                        // 3. 将全局按钮功能指向当前模块 (例如: 重复读题, 查看历史)
-                        window.repeatQuestion = () => {
-                            if (currentAppModule && currentAppModule.repeatQuestion) currentAppModule.repeatQuestion();
-                        };
-                        window.toggleHistory = () => {
-                            if (currentAppModule && currentAppModule.toggleHistory) currentAppModule.toggleHistory();
-                        };
-
-                        // 4. 开始出题
-                        if (module.makeQuiz) {
-                            module.makeQuiz();
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Failed to load ${modulePath}`, error);
                     });
-            }
+
+                    // 2. 初始化 TTS 开关
+                    currentAppModule.setupTtsToggle();
+
+                    // 3. 将全局按钮功能指向当前模块 (例如: 重复读题, 查看历史)
+                    window.repeatQuestion = () => {
+                        if (currentAppModule && currentAppModule.repeatQuestion) currentAppModule.repeatQuestion();
+                    };
+                    window.toggleHistory = () => {
+                        if (currentAppModule && currentAppModule.toggleHistory) currentAppModule.toggleHistory();
+                    };
+
+                    // 4. 开始出题
+                    currentAppModule.makeQuiz();
+                })
+                .catch(error => {
+                    console.error(`Failed to load game ${appName}`, error);
+                });
         }
 
         function goHome() {

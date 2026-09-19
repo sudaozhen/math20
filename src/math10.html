@@ -27,7 +27,8 @@
 <script src="scratchpad.js"></script>
 <script src="keypad.js"></script>
 <script type="module">
-    import * as game from './math10.js';
+    import { createGame } from './mathgame.js';
+    const game = createGame('math10');
     import './main.js'; // For update checker
 
     // 1. 渲染通用游戏界面
