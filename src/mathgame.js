@@ -13,9 +13,65 @@ const CONFIGS = {
             const b = Math.floor(Math.random() * 9) + 1; // 1-9
             return { a, b, op: '×', ans: a * b };
         } },
+    // 两位数加减法：操作数均为两位数，和 ≤100、差 ≥0（答案最大 100，3 位输入够用）
+    math100: { tBank: 6, tYellow: 4, tRed: 6, tBlack: 10,
+        gen: () => {
+            if (Math.random() > 0.5) {
+                const a = Math.floor(Math.random() * 81) + 10;          // 10-90，保证 b≥10 时和 ≤100
+                const b = Math.floor(Math.random() * (91 - a)) + 10;    // 10..(100-a)
+                return { a, b, op: '+', ans: a + b };
+            }
+            const a = Math.floor(Math.random() * 90) + 10;              // 10-99
+            const b = Math.floor(Math.random() * (a - 9)) + 10;         // 10..a，差 ≥0
+            return { a, b, op: '-', ans: a - b };
+        } },
+    // 两位数连加：三个两位数相加，和 ≤100；三项装不进 a/op/b，用 text/tts 显式给出
+    mathChain: { tBank: 8, tYellow: 5, tRed: 8, tBlack: 12,
+        gen: () => {
+            const a = Math.floor(Math.random() * 61) + 10;         // 10-70，给 b、c 留出 ≥10 的空间
+            const b = Math.floor(Math.random() * (71 - a)) + 10;   // 10..(80-a)
+            const c = Math.floor(Math.random() * (91 - a - b)) + 10; // 10..(100-a-b)，和 ≤100
+            return { a, b, op: '+', ans: a + b + c,
+                     text: `${a} + ${b} + ${c} =`, tts: `${a}加${b}再加${c}等于` };
+        } },
+    // 两位数连减：a-b-c，中间结果与最终结果均 ≥0
+    mathChainSub: { tBank: 8, tYellow: 5, tRed: 8, tBlack: 12,
+        gen: () => {
+            const b = Math.floor(Math.random() * 30) + 10;          // 10-39
+            const c = Math.floor(Math.random() * (80 - b)) + 10;    // 10..(89-b)，保证 b+c ≤89
+            const a = Math.floor(Math.random() * (100 - b - c)) + b + c; // b+c..99，差 ≥0
+            return { a, b, op: '-', ans: a - b - c,
+                     text: `${a} - ${b} - ${c} =`, tts: `${a}减${b}再减${c}等于` };
+        } },
+    // 两位数加减混合：a+b-c 或 a-b+c，中间/最终结果均 ≥0，答案 ≤100
+    mathMix: { tBank: 8, tYellow: 5, tRed: 8, tBlack: 12,
+        gen: () => {
+            if (Math.random() > 0.5) {
+                const a = Math.floor(Math.random() * 90) + 10;      // 10-99
+                const b = Math.floor(Math.random() * 90) + 10;      // 10-99
+                const lo = Math.max(10, a + b - 99);                // 保证答案 ≤99
+                const hi = Math.min(a + b, 99);                     // c 本身也是两位数
+                const c = Math.floor(Math.random() * (hi - lo + 1)) + lo; // lo..hi，答案 ≥0
+                return { a, b, op: '+', ans: a + b - c,
+                         text: `${a} + ${b} - ${c} =`, tts: `${a}加${b}再减${c}等于` };
+            }
+            const a = Math.floor(Math.random() * 90) + 10;          // 10-99
+            const b = Math.floor(Math.random() * (a - 9)) + 10;     // 10..a，中间结果 ≥0
+            const hi = Math.min(99, 100 - (a - b));                 // 保证答案 ≤100
+            const c = Math.floor(Math.random() * (hi - 9)) + 10;    // 10..hi
+            return { a, b, op: '-', ans: a - b + c,
+                     text: `${a} - ${b} + ${c} =`, tts: `${a}减${b}再加${c}等于` };
+        } },
+    // 表内除法：从乘法表反推，保证整除（被除数=除数×商）
+    mathDiv: { tBank: 3, tYellow: 2, tRed: 3, tBlack: 5,
+        gen: () => {
+            const b = Math.floor(Math.random() * 9) + 1;   // 除数 1-9
+            const ans = Math.floor(Math.random() * 9) + 1; // 商 1-9
+            return { a: b * ans, b, op: '÷', ans };
+        } },
 };
 
-const OP_TEXT = { '+': '加', '-': '减', '×': '乘' };
+const OP_TEXT = { '+': '加', '-': '减', '×': '乘', '÷': '除以' };
 
 export function createGame(name) {
     const cfg = CONFIGS[name];
@@ -63,6 +119,8 @@ export function createGame(name) {
             currentQuiz.b = q.b;
             currentQuiz.op = q.op;
             currentQuiz.ans = q.ans;
+            currentQuiz.text = q.text;
+            currentQuiz.tts = q.tts;
             isFromBank = true;
         }
 
@@ -89,7 +147,7 @@ export function createGame(name) {
 
         if (isTtsEnabled && window.tts) {
             const opText = OP_TEXT[currentQuiz.op];
-            const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
+            const questionText = currentQuiz.tts || `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
             tts.speak(questionText, 'zh-CN', () => {
                 quizStartTime = Date.now();
             });
@@ -119,7 +177,7 @@ export function createGame(name) {
         if (isTtsEnabled) {
             qEl.innerText = '请听题...';
         } else {
-            qEl.innerText = `${currentQuiz.a} ${currentQuiz.op} ${currentQuiz.b} =`;
+            qEl.innerText = currentQuiz.text || `${currentQuiz.a} ${currentQuiz.op} ${currentQuiz.b} =`;
         }
     }
 
@@ -194,7 +252,7 @@ export function createGame(name) {
     function repeatQuestion() {
         if (window.tts) {
             const opText = OP_TEXT[currentQuiz.op];
-            const questionText = `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
+            const questionText = currentQuiz.tts || `${currentQuiz.a} ${opText} ${currentQuiz.b} 等于`;
             tts.speak(questionText, 'zh-CN');
         }
     }
@@ -255,17 +313,22 @@ export function createGame(name) {
         } catch (e) { console.error('Save mistakes failed', e); }
     }
 
+    // 去重键：连加等多项题用题目文本，普通题退化为 a op b（兼容旧版本存的条目）
+    const quizKey = q => q.text || `${q.a}${q.op}${q.b}`;
+
     function addToMistakeBank(q) {
-        const exists = mistakeBank.some(item => item.a === q.a && item.b === q.b && item.op === q.op);
+        const key = quizKey(q);
+        const exists = mistakeBank.some(item => (item.key || `${item.a}${item.op}${item.b}`) === key);
         if (!exists) {
-            mistakeBank.push({ a: q.a, b: q.b, op: q.op, ans: q.ans });
+            mistakeBank.push({ a: q.a, b: q.b, op: q.op, ans: q.ans, text: q.text, tts: q.tts, key });
             saveMistakes();
         }
     }
 
     function removeFromMistakeBank(q) {
+        const key = quizKey(q);
         const initialLen = mistakeBank.length;
-        mistakeBank = mistakeBank.filter(item => !(item.a === q.a && item.b === q.b && item.op === q.op));
+        mistakeBank = mistakeBank.filter(item => (item.key || `${item.a}${item.op}${item.b}`) !== key);
         if (mistakeBank.length < initialLen) saveMistakes();
     }
 

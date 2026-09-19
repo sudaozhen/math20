@@ -28,7 +28,7 @@
 <script src="keypad.js"></script>
 <script type="module">
     // 用法: game.html?g=math10|math20|math50 (缺省 math20)
-    const TITLES = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表' };
+    const TITLES = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表', mathDiv: '除法表', math100: '两位数加减法', mathChain: '两位数连加', mathChainSub: '两位数连减', mathMix: '两位数加减混合' };
     const name = new URLSearchParams(location.search).get('g');
     if (!TITLES[name]) location.replace(name ? 'index.html' : 'game.html?g=math20');
     else {

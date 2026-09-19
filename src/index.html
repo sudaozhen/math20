@@ -92,6 +92,26 @@
                 <span class="app-icon">✖️</span>
                 <span class="app-name">乘法表</span>
             </div>
+            <div class="app-card math" onclick="launchApp('mathDiv')">
+                <span class="app-icon">➗</span>
+                <span class="app-name">除法表</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('math100')">
+                <span class="app-icon">🔢</span>
+                <span class="app-name">两位数加减法</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('mathChain')">
+                <span class="app-icon">➕</span>
+                <span class="app-name">两位数连加</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('mathChainSub')">
+                <span class="app-icon">➖</span>
+                <span class="app-name">两位数连减</span>
+            </div>
+            <div class="app-card math" onclick="launchApp('mathMix')">
+                <span class="app-icon">🔀</span>
+                <span class="app-name">两位数加减混合</span>
+            </div>
         </div>
         <div id="version-display" style="margin-top: auto; padding-top: 20px; color: #888; font-size: 0.9rem;"></div>
     </div>
@@ -125,7 +145,7 @@
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
 
-            const gameTitles = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表' };
+            const gameTitles = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表', mathDiv: '除法表', math100: '两位数加减法', mathChain: '两位数连加', mathChainSub: '两位数连减', mathMix: '两位数加减混合' };
             const gameTitle = gameTitles[appName];
 
             // 渲染通用游戏界面, 并显示退出按钮
