@@ -27,15 +27,17 @@
 <script src="scratchpad.js"></script>
 <script src="keypad.js"></script>
 <script type="module">
+    // 注意: import 声明必须在模块顶层，不能放进 if/else 块（否则整个脚本 SyntaxError）
+    import { createGame } from './mathgame.js';
+    import './main.js'; // For update checker
+
     // 用法: game.html?g=math10|math20|math50 (缺省 math20)
     const TITLES = { math10: '10以内加减法', math20: '20以内加减法', math50: '50以内加减法', mathMul: '乘法表', mathDiv: '除法表', math100: '两位数加减法', mathChain: '两位数连加', mathChainSub: '两位数连减', mathMix: '两位数加减混合' };
     const name = new URLSearchParams(location.search).get('g');
-    if (!TITLES[name]) location.replace(name ? 'index.html' : 'game.html?g=math20');
-    else {
+    if (!TITLES[name]) {
+        location.replace(name ? 'index.html' : 'game.html?g=math20');
+    } else {
         document.title = TITLES[name];
-
-        import { createGame } from './mathgame.js';
-        import './main.js'; // For update checker
         const game = createGame(name);
 
         // 1. 渲染通用游戏界面
